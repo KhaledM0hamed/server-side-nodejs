@@ -101,3 +101,9 @@ const server = http.createServer((req, res) => {
     </body>
 </html>
 ```
+## Node	Modules Semantic Versioning
+- `<MajorVersion>.<Minor Version>.<Patch>`
+- npm install	can	specify	the	acceptable	package	version:
+    - Exact:	`npm install	express@4.0.0`
+    - Patch	acceptable:	`npm install	express@”~4.0.0”`
+    - Minor	version	acceptable:	`npm	install	express@”^4.0.0”`
