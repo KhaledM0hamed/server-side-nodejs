@@ -9,12 +9,12 @@ JavaScript	Engine
 ## Understanding Node Modules
 1. File-based	Modules
 2. Core	Modules
-   1. Part	of	core	Node
-   2. Examples:	path,	fs,	os,	util, ...
+   - Part	of	core	Node
+   - Examples:	path,	fs,	os,	util, ...
 3. External	Node	modules
-   1. Third-party	modules
-   2. Installed	using	NPM
-   3. node_modules folder	in	your	Node	application
+   - Third-party	modules
+   - Installed	using	NPM
+   - node_modules folder	in	your	Node	application
 
 ## Using	Node	Modules
 1. Include	them	using	require	function
@@ -22,7 +22,7 @@ JavaScript	Engine
     - require(‘./module_name’)
     - Specify	the	relative	path	to	the	file
 3. Core	and	External	modules:
-   1. require(‘module_name’)
-   2. Looks	for	external	modules	in:
+   - require(‘module_name’)
+   - Looks	for	external	modules	in:
        - ./node_modules,	../node_modules,	../../node_modules,	.	.	.
        - Up	the	folder	hierarchy	until	the	module	is	found
