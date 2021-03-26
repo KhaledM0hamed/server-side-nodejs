@@ -107,3 +107,37 @@ const server = http.createServer((req, res) => {
     - Exact:	`npm install	express@4.0.0`
     - Patch	acceptable:	`npm install	express@”~4.0.0”`
     - Minor	version	acceptable:	`npm	install	express@”^4.0.0”`
+
+## A Simple Server using Express
+- Create a file named index.js and add the following code to it:
+``` javascript
+const express = require('express')
+const http = require('http')
+const hostname = 'localhost'
+const port = 3000
+const app = express()
+
+app.use((req, res) => {
+    console.log(req.headers)
+    res.statusCode = 200
+    res.setHeader('content-type', 'text/html')
+    res.end('<html><body><h1>This is an Express Server</h1></body></html>')
+})
+
+const server = http.createServer(app)
+
+server.listen(post, hostname, () => {
+    console.log(`server running at http://${hostname}:${port}/`)
+})
+```
+- Serving Static Files
+- Install morgan by typing the following at the prompt. Morgan is used for logging purposes:
+- Update index.js as follows:
+```javascript
+. . . 
+const morgan = require('morgan')
+. . . 
+app.use(morgan('dev'))
+app.use(express.static(__dirname + '/public'))
+. . . 
+```
