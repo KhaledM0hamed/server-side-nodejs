@@ -141,3 +141,11 @@ app.use(morgan('dev'))
 app.use(express.static(__dirname + '/public'))
 . . . 
 ```
+
+## Express Generator
+- Installing	Express	generator
+```
+npm install	express-generator -g
+```
+- Generating	an	Express	application
+`express	<App	Name>`
