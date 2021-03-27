@@ -50,7 +50,7 @@ MongoClient.connect(url, (err, client) => {
 
 });
 ```
-> Import methods: dropCollection, insertOne, insert
+> Important methods: dropCollection, insertOne, insert, find, deleteOne, updateOne
 
 
 ## Implementing a Node Module of Database Operations
