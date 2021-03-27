@@ -51,3 +51,83 @@ MongoClient.connect(url, (err, client) => {
 });
 ```
 > Import methods: dropCollection, insertOne, insert
+
+
+## Implementing a Node Module of Database Operations
+``` javascript
+const assert = require('assert');
+
+exports.insertDocument = (db, document, collection, callback) => {
+    const coll = db.collection(collection);
+    coll.insert(document, (err, result) => {
+        assert.equal(err, null);
+        console.log("Inserted " + result.result.n +
+            " documents into the collection " + collection);
+        callback(result);
+    });
+};
+
+exports.findDocuments = (db, collection, callback) => {
+    const coll = db.collection(collection);
+    coll.find({}).toArray((err, docs) => {
+        assert.equal(err, null);
+        callback(docs);        
+    });
+};
+
+exports.removeDocument = (db, document, collection, callback) => {
+    const coll = db.collection(collection);
+    coll.deleteOne(document, (err, result) => {
+        assert.equal(err, null);
+        console.log("Removed the document ", document);
+        callback(result);        
+    });
+};
+
+exports.updateDocument = (db, document, update, collection, callback) => {
+    const coll = db.collection(collection);
+    coll.updateOne(document, { $set: update }, null, (err, result) => {
+        assert.equal(err, null);
+        console.log("Updated the document with ", update);
+        callback(result);        
+    });
+};
+
+```
+
+## Example of using the home made operations node module
+```javascript
+. . .
+
+const dboper = require('./operations');
+
+. . .
+
+    dboper.insertDocument(db, { name: "Vadonut", description: "Test"},
+        "dishes", (result) => {
+            console.log("Insert Document:\n", result.ops);
+
+            dboper.findDocuments(db, "dishes", (docs) => {
+                console.log("Found Documents:\n", docs);
+
+                dboper.updateDocument(db, { name: "Vadonut" },
+                    { description: "Updated Test" }, "dishes",
+                    (result) => {
+                        console.log("Updated Document:\n", result.result);
+
+                        dboper.findDocuments(db, "dishes", (docs) => {
+                            console.log("Found Updated Documents:\n", docs);
+                            
+                            db.dropCollection("dishes", (result) => {
+                                console.log("Dropped Collection: ", result);
+
+                                client.close();
+                            });
+                        });
+                    });
+            });
+    });
+    
+. . .
+```
+
