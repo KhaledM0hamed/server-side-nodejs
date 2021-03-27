@@ -131,3 +131,79 @@ const dboper = require('./operations');
 . . .
 ```
 
+## Callback Hell and Promises
+- Heavily	nested	callback code 
+  - Results	from	our	tendency	to	write	code top	to bottom
+  - Pyramid	of	doom
+
+## Example of avoiding callback hell in simple home made operations node module
+
+- operations.js
+```javascript
+const assert = require('assert');
+
+exports.insertDocument = (db, document, collection, callback) => {
+    const coll = db.collection(collection);
+    return coll.insert(document);
+};
+
+exports.findDocuments = (db, collection, callback) => {
+    const coll = db.collection(collection);
+    return coll.find({}).toArray();
+};
+
+exports.removeDocument = (db, document, collection, callback) => {
+    const coll = db.collection(collection);
+    return coll.deleteOne(document);
+};
+
+exports.updateDocument = (db, document, update, collection, callback) => {
+    const coll = db.collection(collection);
+    return coll.updateOne(document, { $set: update }, null);
+};
+
+```
+
+- index.js
+```javascript
+. . .
+
+MongoClient.connect(url).then((client) => {
+
+    console.log('Connected correctly to server');
+    const db = client.db(dbname);
+
+    dboper.insertDocument(db, { name: "Vadonut", description: "Test"},
+        "dishes")
+        .then((result) => {
+            console.log("Insert Document:\n", result.ops);
+
+            return dboper.findDocuments(db, "dishes");
+        })
+        .then((docs) => {
+            console.log("Found Documents:\n", docs);
+
+            return dboper.updateDocument(db, { name: "Vadonut" },
+                    { description: "Updated Test" }, "dishes");
+
+        })
+        .then((result) => {
+            console.log("Updated Document:\n", result.result);
+
+            return dboper.findDocuments(db, "dishes");
+        })
+        .then((docs) => {
+            console.log("Found Updated Documents:\n", docs);
+                            
+            return db.dropCollection("dishes");
+        })
+        .then((result) => {
+            console.log("Dropped Collection: ", result);
+
+            return client.close();
+        })
+        .catch((err) => console.log(err));
+
+})
+.catch((err) => console.log(err));`
+```
