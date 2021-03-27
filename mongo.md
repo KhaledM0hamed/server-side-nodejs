@@ -207,3 +207,152 @@ MongoClient.connect(url).then((client) => {
 })
 .catch((err) => console.log(err));`
 ```
+
+## Mongoose ODM Example
+- models
+```javascript
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const dishSchema = new Schema({
+    name: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    description: {
+        type: String,
+        required: true
+    }
+},{
+    timestamps: true
+});
+
+var Dishes = mongoose.model('Dish', dishSchema);
+
+module.exports = Dishes;
+```
+- index.js
+```javascript
+const mongoose = require('mongoose');
+
+const Dishes = require('./models/dishes');
+
+const url = 'mongodb://localhost:27017/conFusion';
+const connect = mongoose.connect(url);
+
+connect.then((db) => {
+
+    console.log('Connected correctly to server');
+
+    var newDish = Dishes({
+        name: 'Uthappizza',
+        description: 'test'
+    });
+
+    newDish.save()
+        .then((dish) => {
+            console.log(dish);
+
+            return Dishes.find({});
+        })
+        .then((dishes) => {
+            console.log(dishes);
+
+            return Dishes.remove({});
+        })
+        .then(() => {
+            return mongoose.connection.close();
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+
+});
+```
+
+## ## Mongoose ODM Same Example with Sub-documents
+- models
+```javascript
+. . .
+
+var commentSchema = new Schema({
+    rating:  {
+        type: Number,
+        min: 1,
+        max: 5,
+        required: true
+    },
+    comment:  {
+        type: String,
+        required: true
+    },
+    author:  {
+        type: String,
+        required: true
+    }
+}, {
+    timestamps: true
+});
+
+var dishSchema = new Schema({
+    name: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    comments:[commentSchema]
+}, {
+    timestamps: true
+});
+
+. . .
+```
+
+- index.js
+```javascript
+. . .
+
+    Dishes.create({
+        name: 'Uthappizza',
+        description: 'test'
+    })
+    .then((dish) => {
+        console.log(dish);
+
+        return Dishes.findByIdAndUpdate(dish._id, {
+            $set: { description: 'Updated test'}
+        },{ 
+            new: true 
+        })
+        .exec();
+    })
+    .then((dish) => {
+        console.log(dish);
+
+        dish.comments.push({
+            rating: 5,
+            comment: 'I\'m getting a sinking feeling!',
+            author: 'Leonardo di Carpaccio'
+        });
+
+        return dish.save();
+    })
+    .then((dish) => {
+        console.log(dish);
+
+        return Dishes.remove({});
+    })
+    .then(() => {
+        return mongoose.connection.close();
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+    
+. . .
+```
